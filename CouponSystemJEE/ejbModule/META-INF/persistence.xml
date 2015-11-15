@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence>
+	<persistence-unit name="CouponSystem">
+		<jta-data-source>java:/DefaultDS</jta-data-source>
+		<properties>
+			
+		</properties>
+	</persistence-unit>
+</persistence>
