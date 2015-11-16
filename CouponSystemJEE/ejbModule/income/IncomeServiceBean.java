@@ -4,35 +4,41 @@ import java.util.Collection;
 
 import javax.ejb.Remote;
 import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.jboss.aspects.asynchronous.aspects.jboss.Asynchronous;
 
-@Stateless
-@Remote(IncomeService.class)
-public class IncomeServiceBean {
+@Stateless(name="incomeService")
+public class IncomeServiceBean implements IncomeService {
 
+	@PersistenceContext(unitName="couponSystem") 
+	private EntityManager em;
+	
     public IncomeServiceBean() {	}
     
     @Asynchronous
     public void storeIncome(Income income)
     {
-    	
+    	em.persist(income);
     }
     
     public Collection<Income> viewAllIncome()
     {
-		
-    	return null;
+    	Query query = em.createQuery("SELECT i FROM Income AS i");
+		return (Collection<Income>)query.getResultList();
     }
     
     public Collection<Income> viewIncomeByCustomer(long customerId)
     {
-    	return null;
+    	Query query = em.createQuery("SELECT i FROM Income AS i WHERE i.id = :custId");
+    	query.setParameter("custId", customerId);
+		return (Collection<Income>)query.getResultList();
     }
     
     public Collection<Income> viewIncomeByCompany(long companyId)
     {
-    	return null;
+    	return viewIncomeByCustomer(companyId);
     }
-
 }
