@@ -19,13 +19,11 @@ public class IncomeServiceBean implements IncomeService {
     public IncomeServiceBean() {	}
     
     @Asynchronous
-    public void storeIncome(Income income)
-    {
+    public void storeIncome(Income income){
     	em.persist(income);
     }
     
-    public Collection<Income> viewAllIncome()
-    {
+    public Collection<Income> viewAllIncome() {
     	Query query = em.createQuery("SELECT i FROM Income AS i");
 		return (Collection<Income>)query.getResultList();
     }
