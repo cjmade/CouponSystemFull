@@ -19,7 +19,6 @@ public class BusinessDelegate {
 	private QueueSender qsender;
 	private IncomeService incomeService;
 	
-	
 	public BusinessDelegate(){
 		try{
 		InitialContext ctx=new InitialContext();
