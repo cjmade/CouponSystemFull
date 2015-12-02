@@ -2,9 +2,9 @@ package income;
 
 import java.util.Collection;
 
-import javax.ejb.Remote;
+import javax.ejb.Local;
 
-@Remote
+@Local
 public interface IncomeService {
 	public void storeIncome(Income income);
     public Collection<Income> viewAllIncome();

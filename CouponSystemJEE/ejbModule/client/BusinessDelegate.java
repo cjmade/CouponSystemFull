@@ -1,6 +1,7 @@
 package client;
 
 import java.util.Collection;
+import java.util.Hashtable;
 
 import javax.jms.Queue;
 import javax.jms.QueueConnection;
@@ -13,6 +14,7 @@ import javax.naming.InitialContext;
 import income.Income;
 import income.IncomeService;
 
+
 public class BusinessDelegate {
 
 	private QueueSession qsession;
@@ -20,16 +22,24 @@ public class BusinessDelegate {
 	private IncomeService incomeService;
 	
 	public BusinessDelegate(){
-		try{
-		InitialContext ctx=new InitialContext();
-		QueueConnectionFactory f=(QueueConnectionFactory)ctx.lookup("ConnectionFactory");
-		Queue q=(Queue)ctx.lookup("queue/couponQueue");
-		incomeService=(IncomeService)ctx.lookup("incomeService/remote");
-		
-		QueueConnection qcon=f.createQueueConnection();
-		qsession=qcon.createQueueSession(false,Session.AUTO_ACKNOWLEDGE);
-		qsender=qsession.createSender(q);
+		// Prepare initial context
+		InitialContext ctx;
+		Hashtable<String,String> table = new Hashtable<String,String>();
+		table.put("java.naming.factory.initial","org.jnp.interfaces.NamingContextFactory");
+		table.put("java.naming.provider.url","localhost");
+		try
+		{
+			// Set initial context
+			ctx = new InitialContext(table);
+			// Set the rest of connection properties
+			QueueConnectionFactory f = (QueueConnectionFactory)ctx.lookup("ConnectionFactory");
+			Queue q = (Queue)ctx.lookup("queue/couponQueue");
+			incomeService = (IncomeService)ctx.lookup("incomeService/local");
+			QueueConnection qcon = f.createQueueConnection();
+			qsession = qcon.createQueueSession(false,Session.AUTO_ACKNOWLEDGE);
+			qsender = qsession.createSender(q);
 		}catch(Exception e){
+			System.out.println("Something went wrong! persistance denied");
 			e.printStackTrace();
 		}	
 	}
@@ -38,6 +48,7 @@ public class BusinessDelegate {
 		try{
 			qsender.send(qsession.createObjectMessage(i));
 		}catch(Exception e){
+			System.out.println("Income persistance failed");
 			e.printStackTrace();
 		}
 	}
